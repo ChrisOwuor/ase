@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String, required: true }, // Description of the product
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
-  farmId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Farmer ID
+  farmerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Farmer ID
 });
 
 const Product = mongoose.model("Product", productSchema);

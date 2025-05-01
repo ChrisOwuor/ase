@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+const FarmerAccount = require("../models/FarmerAccount");
 require("dotenv").config();
 
 const authRoute = express.Router();
@@ -20,8 +21,15 @@ authRoute.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Email already in use" });
     }
 
+    // Create User
     const newUser = new User({ name, email, password, role, phoneNumber });
     const savedUser = await newUser.save();
+
+    // After creating a farmer, create a FarmerAccount if role is farmer
+    if (role === "farmer") {
+      await FarmerAccount.create({ farmer: savedUser._id });
+    }
+
     savedUser.password = undefined; // Don't send the password in the response
     res
       .status(201)
@@ -31,7 +39,6 @@ authRoute.post("/register", async (req, res) => {
     res.status(500).json({ error: "Registration failed" });
   }
 });
-
 
 
 // User Login

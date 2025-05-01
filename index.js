@@ -19,6 +19,10 @@ const swaggerDocs = require("./Swagger");
 const addressRouter = require("./router/Address.route");
 const authRoute = require("./router/AuthRoutes");
 const adminRouter = require("./router/Admin.route");
+const { getNgrokUrl } = require("./utils");
+const farmerAccountRouter = require("./router/FarmerAccount.Route");
+const helpRouter = require("./router/Help.route");
+const WithdrawalRouter = require("./router/Withdrawal.route");
 
 const app = express();
 dotenv.config();
@@ -43,23 +47,34 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", authMiddleware(["admin", "farmer", "buyer"]), userRouter);
-app.use("/api/stats", authMiddleware(["admin",]), adminRouter);
+app.use("/api/stats", authMiddleware(["admin"]), adminRouter);
 
 app.use("/api/address", addressRouter);
 app.use("/api/products", productRouter); // protected
 app.use("/api/orders", orderRouter);
 app.use("/api/auth", authRoute); // public
-app.use("/api/inventory", authMiddleware(["admin", "farmer"]), inventoryRouter); // protected
-app.use("/api/reports", authMiddleware(["admin", "buyer"]), reportRouter); // protected
-app.use("/api/payment", authMiddleware(["admin", "farmer"]), paymentRouter); // protected
+app.use("/api/inventory", inventoryRouter); // protected
+app.use("/api/reports", reportRouter); // protected
+app.use("/api/payment", authMiddleware(["admin", "farmer"]), paymentRouter);
+app.use("/api/callback", paymentRouter);
+app.use("/api/farmer", authMiddleware([ "farmer"]), farmerAccountRouter);
+app.use("/api", helpRouter);
+app.use("/api/withdrawals", authMiddleware(["admin","farmer"]), WithdrawalRouter);
 // app.use('/api/manage-products', authMiddleware, productManagementRoutes);
-
+app.post('/callback', (req, res) => {
+  console.log('Callback received:', req.body);
+  res.status(200).send('Callback received');
+});
+app.post('/ngrok-url', async (req, res) => {``
+  const ngrokUrl = await getNgrokUrl();
+  res.json({ ngrokUrl });
+});
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, 'localhost', () => {
+    app.listen(PORT, "localhost", () => {
       console.log(`Server running at ${PORT}`);
       console.log("MongoDB Connected");
     });
