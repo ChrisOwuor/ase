@@ -87,8 +87,8 @@ Many farmers are exploited by brokers who buy low and sell high. **FarmConnect**
 ## 🧰 Installation
 
 ```bash
-git clone https://github.com/yourusername/farmconnect-api.git
-cd farmconnect-api
+git clone https://github.com/ChrisOwuor/ase.git
+cd farmApp
 npm install
 cp .env.example .env
 # Fill in environment variables
@@ -139,6 +139,3 @@ This project is built for submission to the **MLH Fellowship** program to showca
 
 ---
 
-## ✨ Demo (Optional)
-
-[Deployed API / Postman Docs / Screenshots if available]
